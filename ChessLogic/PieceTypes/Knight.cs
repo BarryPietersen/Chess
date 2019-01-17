@@ -23,19 +23,20 @@ namespace ChessLogic.PieceTypes
         /// <returns>Returns a List of Squares that could be considered for the knights next move. This is not a validated list of moves.</returns>
         public override List<Square> SearchPossibleMoves(ChessBoard board)
         {
-            List<Square> moves = new List<Square>(8);
-            Square[,] squares = board.Squares;
             int row = CurrentSquare.Row;
             int col = CurrentSquare.Column;
-
-            moves.Add(DirectPlacement(squares, row + 2, col + 1));
-            moves.Add(DirectPlacement(squares, row + 2, col - 1));
-            moves.Add(DirectPlacement(squares, row - 2, col + 1));
-            moves.Add(DirectPlacement(squares, row - 2, col - 1));
-            moves.Add(DirectPlacement(squares, row + 1, col + 2));
-            moves.Add(DirectPlacement(squares, row + 1, col - 2));
-            moves.Add(DirectPlacement(squares, row - 1, col + 2));
-            moves.Add(DirectPlacement(squares, row - 1, col - 2));
+            Square[,] squares = board.Squares;
+            List<Square> moves = new List<Square>
+            {
+                DirectPlacement(squares, row + 2, col + 1),
+                DirectPlacement(squares, row + 2, col - 1),
+                DirectPlacement(squares, row - 2, col + 1),
+                DirectPlacement(squares, row - 2, col - 1),
+                DirectPlacement(squares, row + 1, col + 2),
+                DirectPlacement(squares, row + 1, col - 2),
+                DirectPlacement(squares, row - 1, col + 2),
+                DirectPlacement(squares, row - 1, col - 2)
+            };
 
             IEnumerable<Square> validMoves = from sq in moves
                                              where sq != null

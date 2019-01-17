@@ -14,6 +14,13 @@ namespace ChessLogic
         /// </summary>
         public event OnPieceChange PieceChange;
 
+        public delegate void OnSurfaceColorChange(bool isHighlighted);
+
+        /// <summary>
+        /// The event raised when the squares color needs to either be highlighted or regular. This can be used to notify the Gui.
+        /// </summary>
+        public event OnSurfaceColorChange PaintSquareSurface;
+
         /// <summary>
         /// The vertical 'y' zero based index of the square, relative to the matrix it is located in.
         /// </summary>
@@ -67,6 +74,12 @@ namespace ChessLogic
             Column = column;
             Piece = null;
         }
+
+        /// <summary>
+        /// Invokes the delegate reponsible for holding a reference to the method which paints the overlaying'Gui Square'
+        /// </summary>
+        /// <param name="isHighlighted">Indicates if the square surface should be highlighted or displayed as regular</param>
+        internal void PaintSelf(bool isHighlighted) => PaintSquareSurface?.Invoke(isHighlighted);
 
         /// <summary>
         /// Formats a string which represents the squares properties.

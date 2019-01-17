@@ -20,8 +20,6 @@ namespace ChessGui
             this.enforceTurns = enforceTurns;
 
             game = new GameManager(isP1White, enforceTurns);
-            game.SetSelectedSquareColor += PaintPossibleSquares;
-            game.ResetSelectedSquareColor += ResetGuiSquareColor;
             game.DisplayMessage += DisplayMessage;
             game.CallCheckMate += CheckMate;
 
@@ -36,38 +34,6 @@ namespace ChessGui
         }
 
         private void DisplayMessage(string body, string title) => MessageBox.Show(body, title);
-
-        private void PaintPossibleSquares(List<Square> sqs)
-        {
-            foreach (Control ctl in Controls)
-            {
-                if (ctl is GuiSquare guiSquare)
-                {
-                    if (sqs.Contains(guiSquare.Square))
-                    {
-                        guiSquare.BackColor = Color.Tan;
-                    }
-                }
-            }
-        }
-
-        // an event will be raised from each square to directly
-        // notify the subscribed guisquare, to re draw itself
-        private void ResetGuiSquareColor(List<Square> sqs)
-        {
-            foreach (Control ctl in Controls)
-            {
-                if (ctl is GuiSquare gsq)
-                {
-                    if (sqs.Contains(gsq.Square))
-                    {
-                        gsq.BackColor = gsq.Square.IsWhite == true ?
-                                        SystemColors.ButtonFace :
-                                        SystemColors.WindowFrame;
-                    }
-                }
-            }
-        }
 
         private void CheckMate()
         {

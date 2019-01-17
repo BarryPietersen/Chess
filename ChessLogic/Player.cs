@@ -70,7 +70,6 @@ namespace ChessLogic
         public bool MovePiece(ChessPiece piece, Square newSquare)
         {
             if (newSquare.IsOccupied) CapturePiece(newSquare.Piece);
-
             // specific condition - checks to see if an 'enpassant' move has been made
             else if (piece is Pawn && newSquare.Column != piece.CurrentSquare.Column)
                 CapturePiece(Board.Squares[(piece.CurrentSquare.Row == 3 ? 3 : 4), newSquare.Column].Piece);

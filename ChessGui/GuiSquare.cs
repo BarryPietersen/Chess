@@ -8,9 +8,6 @@ namespace ChessGui
 {
     class GuiSquare : UserControl
     {
-        //public delegate void GuiSquareClick(GuiSquare gsq);
-        //public GuiSquareClick GuiSquareClicked;
-
         private Square square;
         public Square Square
         {
@@ -21,9 +18,17 @@ namespace ChessGui
                 if (value != null)
                 {
                     square.PieceChange += OnPieceChange;
+                    square.PaintSquareSurface += PaintSquareSurface;
                     UpdateGuiSquare();
                 }
             }
+        }
+
+        private void PaintSquareSurface(bool isHighlighted)
+        {
+            if (isHighlighted) BackColor = Color.Tan;
+            else
+                BackColor = Square.IsWhite ? SystemColors.ButtonFace : SystemColors.WindowFrame;
         }
 
         // not used -
@@ -32,12 +37,11 @@ namespace ChessGui
         // Point variable sums can be calculated in the loop
         public GuiSquare(Point location, Square sq)
         {
-            Location = location;
             Square = sq;
-            BackgroundImageLayout = ImageLayout.Stretch;
+            Location = location;   
             Size = new Size(80, 80);
-            BackColor = Square.IsWhite ?
-            SystemColors.ButtonFace : SystemColors.WindowFrame;
+            BackgroundImageLayout = ImageLayout.Stretch;
+            BackColor = Square.IsWhite ? SystemColors.ButtonFace : SystemColors.WindowFrame;
         }
 
         public GuiSquare() { }

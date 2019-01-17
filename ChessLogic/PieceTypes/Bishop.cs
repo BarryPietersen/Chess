@@ -22,8 +22,8 @@ namespace ChessLogic.PieceTypes
         /// <returns>Returns a List of Squares that could be considered for the bishops next move. This is not a validated list of moves.</returns>
         public override List<Square> SearchPossibleMoves(ChessBoard board)
         {
-            List<Square> moves = new List<Square>();
             Square[,] squares = board.Squares;
+            List<Square> moves = new List<Square>();
 
             moves.AddRange(LinearTraversal(squares, 1, 1));
             moves.AddRange(LinearTraversal(squares, 1, -1));

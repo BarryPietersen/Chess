@@ -23,19 +23,21 @@ namespace ChessLogic.PieceTypes
         /// <returns>Returns a List of Squares that could be considered for the kings next move. This is not a validated list of moves.</returns>
         public override List<Square> SearchPossibleMoves(ChessBoard board)
         {
-            List<Square> moves = new List<Square>(8);
-            Square[,] squares = board.Squares;
             int row = CurrentSquare.Row;
             int col = CurrentSquare.Column;
+            Square[,] squares = board.Squares;
 
-            moves.Add(DirectPlacement(squares, row - 1, col - 1));
-            moves.Add(DirectPlacement(squares, row - 1, col + 1));
-            moves.Add(DirectPlacement(squares, row + 1, col - 1));
-            moves.Add(DirectPlacement(squares, row + 1, col + 1));
-            moves.Add(DirectPlacement(squares, row - 1, col));
-            moves.Add(DirectPlacement(squares, row + 1, col));
-            moves.Add(DirectPlacement(squares, row, col - 1));
-            moves.Add(DirectPlacement(squares, row, col + 1));
+            List<Square> moves = new List<Square>
+            {
+                DirectPlacement(squares, row - 1, col - 1),
+                DirectPlacement(squares, row - 1, col + 1),
+                DirectPlacement(squares, row + 1, col - 1),
+                DirectPlacement(squares, row + 1, col + 1),
+                DirectPlacement(squares, row - 1, col),
+                DirectPlacement(squares, row + 1, col),
+                DirectPlacement(squares, row, col - 1),
+                DirectPlacement(squares, row, col + 1)
+            };
 
             if (!HasMoved) moves.AddRange(ConsiderCastling(squares));
 

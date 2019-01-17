@@ -26,10 +26,10 @@ namespace ChessLogic.PieceTypes
         {
             List<Square> moves = new List<Square>();
 
-            //determines which direction the pawn moves
-            sbyte nextRow = (sbyte)(startingRow == 6 ? -1 : 1);
+            // determines which direction the pawn moves
+            int nextRow = startingRow == 6 ? -1 : 1;
 
-            //qualifies the forward two squares for legalMoves
+            // qualifies the forward two squares for legalMoves
             if (!HasMoved)
             {
                 Square square1 = board.Squares[CurrentSquare.Row + nextRow, CurrentSquare.Column];
@@ -39,7 +39,7 @@ namespace ChessLogic.PieceTypes
 
             for (int i = -1; i < 2; i++)
             {
-                //checks index against bounds of the squares[,]
+                // checks index against bounds of the squares[,]
                 if ((CurrentSquare.Column + i <= 7 && CurrentSquare.Column + i >= 0) &&
                     (CurrentSquare.Row <= 6 && CurrentSquare.Row >= 1))
                 {
@@ -48,7 +48,7 @@ namespace ChessLogic.PieceTypes
                     if (!square.IsOccupied && CurrentSquare.Column == square.Column) { moves.Add(square); }
                     else if (square.IsOccupied && (square.Piece.IsWhite != IsWhite && square.Column != CurrentSquare.Column))
                     {
-                        //destroyable piece found
+                        // destroyable piece found
                         moves.Add(square);                  
                     }
                 }
