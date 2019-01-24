@@ -29,12 +29,12 @@ namespace ChessLogic.PieceTypes
             // determines which direction the pawn moves
             int nextRow = startingRow == 6 ? -1 : 1;
 
-            // qualifies the forward two squares for legalMoves
+            // qualify the forward two squares for possibleMoves
             if (!HasMoved)
             {
                 Square square1 = board.Squares[CurrentSquare.Row + nextRow, CurrentSquare.Column];
                 Square square2 = board.Squares[CurrentSquare.Row + nextRow * 2, CurrentSquare.Column];
-                if (square2.Piece == null && square1.Piece == null) moves.Add(square2);
+                if (!square2.IsOccupied && !square1.IsOccupied) moves.Add(square2);
             }
 
             for (int i = -1; i < 2; i++)

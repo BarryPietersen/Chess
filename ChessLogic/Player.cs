@@ -90,7 +90,7 @@ namespace ChessLogic
             if (piece is Pawn promPawn && (promPawn.CurrentSquare.Row == 0 ||
                                            promPawn.CurrentSquare.Row == 7 ))
             {
-                PromotePawn(promPawn, out piece);
+                piece = PromotePawn(piece);
             }
 
             if (EnPassantTracker.HasValue)
@@ -251,12 +251,13 @@ namespace ChessLogic
         // call this method after the pawn has been
         // positioned in its new square to check
         // if it qualifies for a promotion
-        private void PromotePawn(ChessPiece pawn, out ChessPiece piece)
+        private ChessPiece PromotePawn(ChessPiece piece)
         {
-            PieceSet.Remove(pawn);
-            piece = new Queen(pawn.IsWhite, pawn.CurrentSquare);
+            PieceSet.Remove(piece);
+            piece = new Queen(piece.IsWhite, piece.CurrentSquare);
             piece.CurrentSquare.Piece = piece;
             PieceSet.Add(piece);
+            return piece;
         }
 
         // performs the special 'castling' move and

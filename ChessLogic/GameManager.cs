@@ -59,20 +59,20 @@ namespace ChessLogic
 
             if (selectedPieceValidMoves.Count > 0)
             {
-                PaintSquareSurfaces(false);
+                PaintValidSurfaces(false);
                 selectedPieceValidMoves.Clear();
             }
 
-            if (sq != null && sq.Piece != null)
+            if (sq != null && sq.IsOccupied)
             {
                 selectedSquare = sq;
                 selectedPiece = sq.Piece;
 
                 selectedPieceValidMoves = player1.IsWhite == selectedPiece.IsWhite ?
-                                       player1.ValidateMoves(selectedPiece) :
-                                       player2.ValidateMoves(selectedPiece);
+                                          player1.ValidateMoves(selectedPiece) :
+                                          player2.ValidateMoves(selectedPiece);
 
-                PaintSquareSurfaces(true);
+                PaintValidSurfaces(true);
             }
 
             if (checkState.IsCheckMate)
@@ -95,14 +95,14 @@ namespace ChessLogic
             {
                 if (player1.MovePiece(selectedPiece, sq))
                 {
-                    PaintSquareSurfaces(false);
+                    PaintValidSurfaces(false);
                 }
             }
             else
             {
                 if (player2.MovePiece(selectedPiece, sq))
                 {
-                    PaintSquareSurfaces(false);
+                    PaintValidSurfaces(false);
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace ChessLogic
             selectedPiece = null;
         }
 
-        private void PaintSquareSurfaces(bool isHighlighted)
+        private void PaintValidSurfaces(bool isHighlighted)
         {
             foreach (Square sq in selectedPieceValidMoves)
             {
