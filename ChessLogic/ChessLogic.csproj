@@ -47,6 +47,7 @@
     <Compile Include="ChessPiece.cs" />
     <Compile Include="EnPassantTracker.cs" />
     <Compile Include="GameManager.cs" />
+    <Compile Include="PieceFactory.cs" />
     <Compile Include="PieceTypes\Bishop.cs" />
     <Compile Include="PieceTypes\King.cs" />
     <Compile Include="PieceTypes\Knight.cs" />

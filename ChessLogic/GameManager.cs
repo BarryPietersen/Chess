@@ -34,8 +34,8 @@ namespace ChessLogic
             checkState = new CheckState();
             selectedPieceValidMoves = new List<Square>();
 
-            List<ChessPiece> p1Set = Board.BuildPlayer1Pieces(p1IsWhite);
-            List<ChessPiece> p2Set = Board.BuildPlayer2Pieces(!p1IsWhite);
+            List<ChessPiece> p1Set = PieceFactory.BuildPlayer1Pieces(p1IsWhite, Board.Squares);
+            List<ChessPiece> p2Set = PieceFactory.BuildPlayer2Pieces(!p1IsWhite, Board.Squares);
 
             player1 = new Player(p1Set, Board, checkState, p1IsWhite);
             player2 = new Player(p2Set, Board, checkState, !p1IsWhite);

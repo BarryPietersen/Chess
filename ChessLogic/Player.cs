@@ -87,8 +87,7 @@ namespace ChessLogic
             // also checks if the pawn
             // qualifies for a promotion
             // in its new position
-            if (piece is Pawn promPawn && (promPawn.CurrentSquare.Row == 0 ||
-                                           promPawn.CurrentSquare.Row == 7 ))
+            if (piece is Pawn && (piece.CurrentSquare.Row == 0 || piece.CurrentSquare.Row == 7 ))
             {
                 piece = PromotePawn(piece);
             }
