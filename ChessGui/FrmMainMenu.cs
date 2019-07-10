@@ -15,6 +15,7 @@ namespace ChessGui
         public FrmMainMenu()
         {
             InitializeComponent();
+            CboColor.Text = CboColor.Items[0].ToString();
         }
 
         private void BtnNewGame_Click(object sender, EventArgs e)

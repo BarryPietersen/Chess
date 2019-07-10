@@ -15,7 +15,11 @@ namespace ChessLogic.PieceTypes
         /// <param name="isWhite">Specifies the color of the piece, white or black.</param>
         /// <param name="square">Specifies the square in which the piece will be positioned.</param>
         public Pawn(bool isWhite, Square square)
-            : base(isWhite, square) { startingRow = CurrentSquare.Row; }
+            : base(isWhite, square)
+        {
+            Value = 25;
+            startingRow = CurrentSquare.Row;
+        }
 
         /// <summary>
         /// Scans the forward proximity of the pawns current position for possible moves. Communicates with the enpassant tracker.

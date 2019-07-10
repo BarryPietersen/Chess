@@ -13,7 +13,10 @@ namespace ChessLogic.PieceTypes
         /// <param name="isWhite">Specifies the color of the piece, white or black.</param>
         /// <param name="square">Specifies the square in which the piece will be positioned.</param>
         public Queen(bool isWhite, Square square)
-            : base(isWhite, square) { }
+            : base(isWhite, square)
+        {
+            Value = 90;
+        }
 
         /// <summary>
         /// Traverse outward in a queens four straight and four diagonal paths until an out of bounds index or another piece is encountered.

@@ -31,6 +31,8 @@ namespace ChessLogic
         /// </summary>
         public bool HasMoved { get; internal set; }
 
+        public int Value { get; protected set; }
+
         /// <summary>
         /// Initializes a new instance of a ChessPiece with the specified properties.
         /// </summary>

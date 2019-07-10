@@ -14,7 +14,10 @@ namespace ChessLogic.PieceTypes
         /// <param name="isWhite">Specifies the color of the piece, white or black.</param>
         /// <param name="square">Specifies the square in which the piece will be positioned.</param>
         public King(bool isWhite, Square square)
-            : base(isWhite, square) { }
+            : base(isWhite, square)
+        {
+            Value = 100;
+        }
 
         /// <summary>
         /// Checks 8 possible directions a king can travel.

@@ -202,7 +202,7 @@ namespace ChessLogic
         // call searchpossiblemoves on the attacking piece
         // to see if any square returned has a piece
         // property that points to the king
-        private bool IsCheck(ChessPiece attacker)
+        protected bool IsCheck(ChessPiece attacker)
         {
             foreach (Square sq in attacker.SearchPossibleMoves(Board))
             {
@@ -216,7 +216,7 @@ namespace ChessLogic
             return false;
         }
 
-        private bool IsCheckMate()
+        protected bool IsCheckMate()
         {
             foreach (ChessPiece piece in Opponent.PieceSet)
             {
@@ -233,13 +233,13 @@ namespace ChessLogic
         }
 
         // destroys all references to the piece
-        private void CapturePiece(ChessPiece piece)
+        protected void CapturePiece(ChessPiece piece)
         {
             piece.CurrentSquare.Piece = null;
             Opponent.PieceSet.Remove(piece);
         }
 
-        private void PositionPiece(ChessPiece piece, Square newSquare)
+        protected void PositionPiece(ChessPiece piece, Square newSquare)
         {
             piece.CurrentSquare.Piece = null;
             piece.CurrentSquare = newSquare;
@@ -250,7 +250,7 @@ namespace ChessLogic
         // call this method after the pawn has been
         // positioned in its new square to check
         // if it qualifies for a promotion
-        private ChessPiece PromotePawn(ChessPiece piece)
+        protected ChessPiece PromotePawn(ChessPiece piece)
         {
             PieceSet.Remove(piece);
             piece = new Queen(piece.IsWhite, piece.CurrentSquare);
@@ -261,7 +261,7 @@ namespace ChessLogic
 
         // performs the special 'castling' move and
         // positions the rook in its new square
-        private void AnalyseCastlingConditions(King king)
+        protected void AnalyseCastlingConditions(King king)
         {
             if (king.CurrentSquare.Row == 0 || king.CurrentSquare.Row == 7)
             {

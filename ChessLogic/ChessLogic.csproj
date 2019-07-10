@@ -55,6 +55,7 @@
     <Compile Include="PieceTypes\Queen.cs" />
     <Compile Include="PieceTypes\Rook.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PlayerAi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Square.cs" />
   </ItemGroup>

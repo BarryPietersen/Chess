@@ -9,7 +9,7 @@ namespace ChessLogic
     public class GameManager
     {
         private Player player1;
-        private Player player2;
+        private PlayerAi player2;
         private bool isPlayer1Turn;
         private Square selectedSquare;
         private CheckState checkState;
@@ -38,7 +38,7 @@ namespace ChessLogic
             List<ChessPiece> p2Set = PieceFactory.BuildPlayer2Pieces(!p1IsWhite, Board.Squares);
 
             player1 = new Player(p1Set, Board, checkState, p1IsWhite);
-            player2 = new Player(p2Set, Board, checkState, !p1IsWhite);
+            player2 = new PlayerAi(p2Set, Board, checkState, !p1IsWhite);
 
             player1.Opponent = player2;
             player2.Opponent = player1;
@@ -112,7 +112,8 @@ namespace ChessLogic
             if (selectedSquare.Piece.IsWhite == player1.IsWhite && isPlayer1Turn)
             {
                 MovePiece(sq);
-                isPlayer1Turn = false;
+                player2.Think();
+                //isPlayer1Turn = false;
             }
             else if (selectedSquare.Piece.IsWhite == player2.IsWhite && !isPlayer1Turn)
             {
