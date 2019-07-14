@@ -27,7 +27,7 @@ namespace ChessLogic
         /// <summary>
         /// A shared object which stores information on any check/checkmate conditions.
         /// </summary>
-        private CheckState CheckState;
+        protected CheckState CheckState;
 
         /// <summary>
         /// Returns a bool representing the players color.
@@ -202,7 +202,7 @@ namespace ChessLogic
         // call searchpossiblemoves on the attacking piece
         // to see if any square returned has a piece
         // property that points to the king
-        protected bool IsCheck(ChessPiece attacker)
+        public bool IsCheck(ChessPiece attacker)
         {
             foreach (Square sq in attacker.SearchPossibleMoves(Board))
             {
@@ -216,7 +216,7 @@ namespace ChessLogic
             return false;
         }
 
-        protected bool IsCheckMate()
+        public bool IsCheckMate()
         {
             foreach (ChessPiece piece in Opponent.PieceSet)
             {
@@ -236,32 +236,38 @@ namespace ChessLogic
         protected void CapturePiece(ChessPiece piece)
         {
             piece.CurrentSquare.Piece = null;
+            piece.CurrentSquare.PieceChanged();
+
             Opponent.PieceSet.Remove(piece);
         }
 
         protected void PositionPiece(ChessPiece piece, Square newSquare)
         {
             piece.CurrentSquare.Piece = null;
+            piece.CurrentSquare.PieceChanged();
+
             piece.CurrentSquare = newSquare;
             piece.CurrentSquare.Piece = piece;
+            piece.CurrentSquare.PieceChanged();
         }
 
         // promotes a pawn piece to a queen piece,
         // call this method after the pawn has been
         // positioned in its new square to check
         // if it qualifies for a promotion
-        protected ChessPiece PromotePawn(ChessPiece piece)
+        public ChessPiece PromotePawn(ChessPiece piece)
         {
             PieceSet.Remove(piece);
             piece = new Queen(piece.IsWhite, piece.CurrentSquare);
             piece.CurrentSquare.Piece = piece;
+            piece.CurrentSquare.PieceChanged();
             PieceSet.Add(piece);
             return piece;
         }
 
         // performs the special 'castling' move and
         // positions the rook in its new square
-        protected void AnalyseCastlingConditions(King king)
+        internal void AnalyseCastlingConditions(King king)
         {
             if (king.CurrentSquare.Row == 0 || king.CurrentSquare.Row == 7)
             {

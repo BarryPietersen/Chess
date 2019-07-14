@@ -44,8 +44,8 @@ namespace ChessLogic
                         board.Squares[pawn.CurrentSquare.Row, col + i].Piece.IsWhite != pawn.IsWhite &&
                         board.Squares[pawn.CurrentSquare.Row, col + i].Piece is Pawn enPassantPawn)
                     {
-                        CurrentEnPassants.Add(enPassantPawn,
-                        board.Squares[(pawn.CurrentSquare.Row == 4 ? 5 : 2), pawn.CurrentSquare.Column]);
+                        //CurrentEnPassants.Add(enPassantPawn,
+                        //board.Squares[(pawn.CurrentSquare.Row == 4 ? 5 : 2), pawn.CurrentSquare.Column]);
                     }
                 }
             }

@@ -50,10 +50,12 @@ namespace ChessLogic
         // player will move or just observe possible moves
         public void SquareClicked(Square sq)
         {
+            bool moved = false;
             if (selectedPieceValidMoves.Contains(sq))
             {
                 if (!enforceTurns) MovePiece(sq);
                 else ValidatePlayerTurns(sq);
+                moved = true;
                 sq = null;
             }
 
@@ -75,6 +77,14 @@ namespace ChessLogic
                 PaintValidSurfaces(true);
             }
 
+            checkState.IsCheck = false;
+            checkState.CheckedKing = null;
+
+            if (moved)
+            {
+                player2.Think();
+            }
+
             if (checkState.IsCheckMate)
             {
                 // envoke delegate and announce checkmate
@@ -83,7 +93,7 @@ namespace ChessLogic
             }
             else if (checkState.IsCheck)
             {
-                DisplayMessage?.Invoke(checkState.CheckMessage, "Check!");
+                //DisplayMessage?.Invoke(checkState.CheckMessage, "Check!");
                 checkState.IsCheck = false;
                 checkState.CheckedKing = null;
             }
@@ -112,7 +122,8 @@ namespace ChessLogic
             if (selectedSquare.Piece.IsWhite == player1.IsWhite && isPlayer1Turn)
             {
                 MovePiece(sq);
-                player2.Think();
+
+
                 //isPlayer1Turn = false;
             }
             else if (selectedSquare.Piece.IsWhite == player2.IsWhite && !isPlayer1Turn)

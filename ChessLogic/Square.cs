@@ -53,11 +53,15 @@ namespace ChessLogic
         /// </summary>
         public ChessPiece Piece
         {
-            get => piece;
+
+            get
+            {
+                return piece;
+            } 
             internal set
             {
                 piece = value;
-                PieceChange?.Invoke();
+                //PieceChange?.Invoke();
             }
         }
 
@@ -73,6 +77,11 @@ namespace ChessLogic
             Row = row;
             Column = column;
             Piece = null;
+        }
+
+        public void PieceChanged()
+        {
+            PieceChange?.Invoke();
         }
 
         /// <summary>
