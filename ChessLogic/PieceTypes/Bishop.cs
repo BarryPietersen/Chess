@@ -15,7 +15,7 @@ namespace ChessLogic.PieceTypes
         public Bishop(bool isWhite, Square square)
             : base(isWhite, square)
         {
-            Value = 70;
+            Value = 350;
         }
 
         /// <summary>

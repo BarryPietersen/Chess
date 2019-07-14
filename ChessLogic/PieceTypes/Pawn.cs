@@ -17,7 +17,7 @@ namespace ChessLogic.PieceTypes
         public Pawn(bool isWhite, Square square)
             : base(isWhite, square)
         {
-            Value = 25;
+            Value = 100;
             startingRow = CurrentSquare.Row;
         }
 

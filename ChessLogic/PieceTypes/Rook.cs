@@ -15,7 +15,7 @@ namespace ChessLogic.PieceTypes
         public Rook(bool isWhite, Square square)
             : base(isWhite, square)
         {
-            Value = 70;
+            Value = 500;
         }
 
         /// <summary>

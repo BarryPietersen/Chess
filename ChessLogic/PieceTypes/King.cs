@@ -16,7 +16,7 @@ namespace ChessLogic.PieceTypes
         public King(bool isWhite, Square square)
             : base(isWhite, square)
         {
-            Value = 100;
+            Value = 10000;
         }
 
         /// <summary>

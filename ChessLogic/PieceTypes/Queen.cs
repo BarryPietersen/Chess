@@ -15,7 +15,7 @@ namespace ChessLogic.PieceTypes
         public Queen(bool isWhite, Square square)
             : base(isWhite, square)
         {
-            Value = 90;
+            Value = 1000;
         }
 
         /// <summary>

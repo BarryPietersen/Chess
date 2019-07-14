@@ -16,7 +16,7 @@ namespace ChessLogic.PieceTypes
         public Knight(bool isWhite, Square square)
             : base(isWhite, square)
         {
-            Value = 50;
+            Value = 350;
         }
 
         /// <summary>
