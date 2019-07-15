@@ -160,5 +160,15 @@ namespace ChessGui
         {
             menu.Show();
         }
+
+        private void ChkAnimate_CheckedChanged(object sender, EventArgs e)
+        {
+            game.player2.AnimateThoughts = ChkAnimate.Checked;
+        }
+
+        private void ChkEngageAi_CheckedChanged(object sender, EventArgs e)
+        {
+            game.EnguageAi = ChkEngageAi.Checked;
+        }
     }
 }

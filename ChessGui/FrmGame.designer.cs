@@ -111,12 +111,14 @@
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
+            this.ChkAnimate = new System.Windows.Forms.CheckBox();
+            this.ChkEngageAi = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // BtnMenu
             // 
             this.BtnMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnMenu.Location = new System.Drawing.Point(782, 25);
+            this.BtnMenu.Location = new System.Drawing.Point(747, 91);
             this.BtnMenu.Name = "BtnMenu";
             this.BtnMenu.Size = new System.Drawing.Size(75, 23);
             this.BtnMenu.TabIndex = 64;
@@ -138,9 +140,9 @@
             // guiSquare2
             // 
             this.guiSquare2.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.guiSquare2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;        
+            this.guiSquare2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.guiSquare2.Location = new System.Drawing.Point(123, 35);
-            this.guiSquare2.Name = "guiSquare2";   
+            this.guiSquare2.Name = "guiSquare2";
             this.guiSquare2.Size = new System.Drawing.Size(80, 80);
             this.guiSquare2.Square = null;
             this.guiSquare2.TabIndex = 66;
@@ -831,7 +833,7 @@
             // BtnReset
             // 
             this.BtnReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnReset.Location = new System.Drawing.Point(782, 55);
+            this.BtnReset.Location = new System.Drawing.Point(747, 121);
             this.BtnReset.Name = "BtnReset";
             this.BtnReset.Size = new System.Drawing.Size(75, 23);
             this.BtnReset.TabIndex = 129;
@@ -999,12 +1001,40 @@
             this.label16.TabIndex = 145;
             this.label16.Text = "1";
             // 
+            // ChkAnimate
+            // 
+            this.ChkAnimate.AutoSize = true;
+            this.ChkAnimate.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChkAnimate.Location = new System.Drawing.Point(748, 177);
+            this.ChkAnimate.Name = "ChkAnimate";
+            this.ChkAnimate.Size = new System.Drawing.Size(146, 22);
+            this.ChkAnimate.TabIndex = 146;
+            this.ChkAnimate.Text = "Animate Thoughts";
+            this.ChkAnimate.UseVisualStyleBackColor = true;
+            this.ChkAnimate.CheckedChanged += new System.EventHandler(this.ChkAnimate_CheckedChanged);
+            // 
+            // ChkEngageAi
+            // 
+            this.ChkEngageAi.AutoSize = true;
+            this.ChkEngageAi.Checked = true;
+            this.ChkEngageAi.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ChkEngageAi.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChkEngageAi.Location = new System.Drawing.Point(747, 154);
+            this.ChkEngageAi.Name = "ChkEngageAi";
+            this.ChkEngageAi.Size = new System.Drawing.Size(93, 22);
+            this.ChkEngageAi.TabIndex = 147;
+            this.ChkEngageAi.Text = "Engage AI";
+            this.ChkEngageAi.UseVisualStyleBackColor = true;
+            this.ChkEngageAi.CheckedChanged += new System.EventHandler(this.ChkEngageAi_CheckedChanged);
+            // 
             // FrmGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ScrollBar;
             this.ClientSize = new System.Drawing.Size(933, 749);
+            this.Controls.Add(this.ChkEngageAi);
+            this.Controls.Add(this.ChkAnimate);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label14);
@@ -1182,5 +1212,7 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.CheckBox ChkAnimate;
+        private System.Windows.Forms.CheckBox ChkEngageAi;
     }
 }

@@ -42,7 +42,8 @@ namespace ChessLogic.PieceTypes
                 DirectPlacement(squares, row, col + 1)
             };
 
-            if (!HasMoved) moves.AddRange(ConsiderCastling(squares));
+            // castling is out for now
+            // if (!HasMoved) moves.AddRange(ConsiderCastling(squares));
 
             IEnumerable<Square> validMoves = from sq in moves
                                              where sq != null

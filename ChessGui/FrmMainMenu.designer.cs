@@ -208,8 +208,6 @@
             // ChkEnforce
             // 
             this.ChkEnforce.AutoSize = true;
-            this.ChkEnforce.Checked = true;
-            this.ChkEnforce.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkEnforce.Location = new System.Drawing.Point(82, 135);
             this.ChkEnforce.Name = "ChkEnforce";
             this.ChkEnforce.Size = new System.Drawing.Size(110, 20);

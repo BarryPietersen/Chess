@@ -9,6 +9,7 @@ namespace ChessLogic
 {
     public class PlayerAi : Player
     {
+        public bool AnimateThoughts { get; set; }
         public PlayerAi(List<ChessPiece> pieceSet, ChessBoard board,
             CheckState checkState, bool isWhite) : base (pieceSet, board, checkState, isWhite){ }
 
@@ -24,13 +25,14 @@ namespace ChessLogic
                     ms = new MoveState(this, Opponent);
                     int v = MovePiece(this, Opponent, p, sq, ms);
 
-                    ms.P1Pieces[0].Item2.PieceChanged();
-                    sq.PieceChanged();
-                    Task.Delay(200).Wait();
+                    if (AnimateThoughts)
+                    {
+                        Task.Delay(650).Wait();
+                    }
 
                     v += DfsThink(Opponent, this);
                     moves.Add(new Tuple<ChessPiece, Square, int>(p, sq, v));
-                    ms.Restore();
+                    ms.Restore(AnimateThoughts);
                 }
             }
 
@@ -53,9 +55,9 @@ namespace ChessLogic
             }
         }
 
-        // the recursive method is time consuming and requires debugging
-        // for now just searching one move deep and selecting the highest
-        // value capture
+        // the recursive method is time consuming,
+        // for now just searching three moves deep
+        // and selecting the highest value capture
         private int DfsThink(Player p1, Player p2, int depth = 2)
         {
             if (depth == 0) return 0;
@@ -69,13 +71,14 @@ namespace ChessLogic
                     int val = MovePiece(p1, p2, p, sq, ms);
                     val = depth % 2 == 0 ? -val : val;
 
-                    ms.P1Pieces[0].Item2.PieceChanged();
-                    sq.PieceChanged();
-                    Task.Delay(200).Wait();
+                    if (AnimateThoughts)
+                    {
+                        Task.Delay(650).Wait();
+                    }
 
                     val += DfsThink(p2, p1, depth - 1);
                     value = Math.Max(val, value);
-                    ms.Restore();
+                    ms.Restore(AnimateThoughts);
                 }
             }
 
@@ -112,20 +115,28 @@ namespace ChessLogic
 
             piece.CurrentSquare.Piece = null;
 
-            piece.CurrentSquare.PieceChanged();
+            if (AnimateThoughts)
+            {
+                piece.CurrentSquare.PieceChanged();
+            }
 
             piece.CurrentSquare = square;
             piece.CurrentSquare.Piece = piece;
 
-            piece.CurrentSquare.PieceChanged();
+            if (AnimateThoughts)
+            {
+                piece.CurrentSquare.PieceChanged();
+            }
 
             if (!piece.HasMoved)
             {
-                if (piece is Pawn pawn) EnPassantTracker.AnalyseEnpassantConditions(pawn, Board);
-                else if (piece is King king)
-                {
-                    //p1.AnalyseCastlingConditions(king);
-                }
+                // these features are out for now
+                //if (piece is Pawn pawn) EnPassantTracker.AnalyseEnpassantConditions(pawn, Board);
+                //else if (piece is King king)
+                //{
+                //    castling is out for now
+                //    p1.AnalyseCastlingConditions(king);
+                //}
 
                 piece.HasMoved = true;
             }
@@ -136,7 +147,11 @@ namespace ChessLogic
             if (piece is Pawn && (piece.CurrentSquare.Row == 0 || piece.CurrentSquare.Row == 7))
             {
                 piece = p1.PromotePawn(piece);
-                piece.CurrentSquare.PieceChanged();
+
+                if (AnimateThoughts)
+                {
+                    piece.CurrentSquare.PieceChanged();
+                }
             }
 
             if (EnPassantTracker.HasValue)
@@ -174,16 +189,18 @@ namespace ChessLogic
                 P2Pieces = new List<Tuple<ChessPiece, Square, bool>>();
             }
 
-            public void Restore()
+            public void Restore(bool animateThoughts)
             {
                 foreach (var tup in P1Pieces)
-                {
-                    
+                {                 
                     tup.Item1.HasMoved = tup.Item3;
                     tup.Item1.CurrentSquare = tup.Item2;
                     tup.Item2.Piece = tup.Item1;
 
-                    tup.Item2.PieceChanged();
+                    if (animateThoughts)
+                    {
+                        tup.Item2.PieceChanged();
+                    }
                 }
 
                 foreach (var tup in P2Pieces)
@@ -193,14 +210,21 @@ namespace ChessLogic
                     tup.Item2.Piece = tup.Item1;
 
                     P2.PieceSet.Add(tup.Item1);
-                    tup.Item2.PieceChanged();
+
+                    if (animateThoughts)
+                    {
+                        tup.Item2.PieceChanged();
+                    }
                 }
 
                 if (ToSquare != null)
                 {
                     ToSquare.Piece = null;
-                   
-                    ToSquare.PieceChanged();
+
+                    if (animateThoughts)
+                    {
+                        ToSquare.PieceChanged();
+                    }
                 }
             }
         }

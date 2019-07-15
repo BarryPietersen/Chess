@@ -8,8 +8,9 @@ namespace ChessLogic
 {
     public class GameManager
     {
+        public bool EnguageAi = true;
         private Player player1;
-        private PlayerAi player2;
+        public PlayerAi player2;
         private bool isPlayer1Turn;
         private Square selectedSquare;
         private CheckState checkState;
@@ -80,7 +81,7 @@ namespace ChessLogic
             checkState.IsCheck = false;
             checkState.CheckedKing = null;
 
-            if (moved)
+            if (moved && EnguageAi)
             {
                 player2.Think();
             }

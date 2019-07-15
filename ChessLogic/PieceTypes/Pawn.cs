@@ -60,8 +60,9 @@ namespace ChessLogic.PieceTypes
 
             if (EnPassantTracker.CurrentEnPassants.ContainsKey(this))
             {
-                moves.Add(EnPassantTracker.CurrentEnPassants[this]);
-                EnPassantTracker.HasValue = true;
+                // enpassant is out for now
+                //moves.Add(EnPassantTracker.CurrentEnPassants[this]);
+                //EnPassantTracker.HasValue = true;
             }
 
             return moves;
