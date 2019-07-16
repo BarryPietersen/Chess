@@ -90,6 +90,8 @@ namespace ChessLogic
             if (piece is Pawn && (piece.CurrentSquare.Row == 0 || piece.CurrentSquare.Row == 7 ))
             {
                 piece = PromotePawn(piece);
+                piece.CurrentSquare.PieceChanged();
+
             }
 
             if (EnPassantTracker.HasValue)
@@ -260,7 +262,6 @@ namespace ChessLogic
             PieceSet.Remove(piece);
             piece = new Queen(piece.IsWhite, piece.CurrentSquare);
             piece.CurrentSquare.Piece = piece;
-            piece.CurrentSquare.PieceChanged();
             PieceSet.Add(piece);
             return piece;
         }

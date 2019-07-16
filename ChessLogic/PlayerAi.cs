@@ -147,6 +147,7 @@ namespace ChessLogic
             if (piece is Pawn && (piece.CurrentSquare.Row == 0 || piece.CurrentSquare.Row == 7))
             {
                 piece = p1.PromotePawn(piece);
+                moveState.PromotedPawn = (Queen)piece;
 
                 if (AnimateThoughts)
                 {
@@ -165,7 +166,7 @@ namespace ChessLogic
                 value = 20;
                 if (p2.IsCheckMate())
                 {
-                    value = 1000;
+                    value = 10000;
                 }
             }
 
@@ -179,6 +180,7 @@ namespace ChessLogic
             public Player P2 { get; set; }
             public List<Tuple<ChessPiece, Square, bool>> P1Pieces { get; set; }
             public List<Tuple<ChessPiece, Square, bool>> P2Pieces { get; set; }
+            public Queen PromotedPawn { get; set; }
 
             public MoveState(Player p1, Player p2)
             {
@@ -225,6 +227,12 @@ namespace ChessLogic
                     {
                         ToSquare.PieceChanged();
                     }
+                }
+
+                if (PromotedPawn != null)
+                {
+                    P1.PieceSet.Remove(PromotedPawn);
+                    P1.PieceSet.Add(P1Pieces[0].Item1);
                 }
             }
         }
