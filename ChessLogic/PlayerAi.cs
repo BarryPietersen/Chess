@@ -43,17 +43,31 @@ namespace ChessLogic
             {
                 var max = moves.Max(m => m.Item3);
                 var highest = moves.Where(m => m.Item3 == max).ToList();
-
                 var move = highest[new Random().Next(0, highest.Count - 1)];
 
                 MovePiece(move.Item1, move.Item2);
             }
-            else
+            else if (IsCheckMate())
             {
                 CheckState.IsCheckMate = true;
                 CheckState.CheckMateKing = (King)PieceSet.Where(p => p is King).First();
             }
+            else
+            {
+                CheckState.IsStaleMate = true;
+                CheckState.StaleMateKing = (King)PieceSet.Where(p => p is King).First();
+            }
         }
+
+        /*
+            Pawn    100
+            Rook    500
+            Knight  350
+            Bishop  350
+            Queen   1000
+            King    10000
+
+        */
 
         // the recursive method is time consuming,
         // for now just searching three moves deep
@@ -61,28 +75,39 @@ namespace ChessLogic
         private int DfsThink(Player p1, Player p2, int depth = 2)
         {
             if (depth == 0) return 0;
-            int value = 0;
+
+            int currentVal;
+            int currentDfs;
+            int dfsValue = 0;
+            int currentMax = int.MinValue;
 
             foreach (var p in p1.PieceSet.ToList())
             {
                 foreach (var sq in p1.ValidateMoves(p))
                 {
                     MoveState ms = new MoveState(p1, p2);
-                    int val = MovePiece(p1, p2, p, sq, ms);
-                    val = depth % 2 == 0 ? -val : val;
+                    currentVal = MovePiece(p1, p2, p, sq, ms);
 
                     if (AnimateThoughts)
                     {
                         Task.Delay(650).Wait();
                     }
 
-                    val += DfsThink(p2, p1, depth - 1);
-                    value = Math.Max(val, value);
+                    currentDfs = DfsThink(p2, p1, depth - 1);
+
+                    if (currentVal > currentMax)
+                    {
+                        currentMax = currentVal;
+                        dfsValue = currentDfs;
+                    }
+
                     ms.Restore(AnimateThoughts);
                 }
             }
 
-            return value;
+            currentMax = depth % 2 == 0 ? -currentMax : currentMax;
+
+            return dfsValue + currentMax;
         }
 
         private int MovePiece(Player p1, Player p2, ChessPiece piece, Square square, MoveState moveState)

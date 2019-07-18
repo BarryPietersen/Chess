@@ -98,6 +98,11 @@ namespace ChessLogic
                 checkState.IsCheck = false;
                 checkState.CheckedKing = null;
             }
+            else if (checkState.IsStaleMate)
+            {
+                DisplayMessage?.Invoke(checkState.StaleMateMessage, "Stale Mate!");
+                //CallCheckMate?.Invoke();
+            }
         }
 
         private void MovePiece(Square sq)

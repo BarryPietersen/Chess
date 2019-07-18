@@ -7,9 +7,11 @@ namespace ChessLogic
     {
         public bool IsCheck { get; set; }
         public bool IsCheckMate { get; set; }
+        public bool IsStaleMate { get; set; }
 
         public King CheckedKing { get; set; }
         public King CheckMateKing { get; set; }
+        public King StaleMateKing { get; set; }
 
         public string CheckMessage
         {
@@ -33,6 +35,18 @@ namespace ChessLogic
                              (CheckMateKing.IsWhite ? " Blacks " : " Whites ") + "wins the game";
                 }
                 else { return "There is no current checkmate conditions"; }
+            }
+        }
+
+        public string StaleMateMessage
+        {
+            get
+            {
+                if (StaleMateKing != null)
+                {
+                    return "Stale Mate";
+                }
+                else { return "There is no current stale mate conditions"; }
             }
         }
     }
