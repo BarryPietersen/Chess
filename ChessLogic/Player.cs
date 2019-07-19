@@ -265,12 +265,12 @@ namespace ChessLogic
         {
             if (king.CurrentSquare.Row == 0 || king.CurrentSquare.Row == 7)
             {
-                if (king.CurrentSquare.Column == 6 || king.CurrentSquare.Column == 5)
+                if (king.CurrentSquare.Column == 6)
                 {
                     Rook rook = (Rook)Board.Squares[king.CurrentSquare.Row, 7].Piece;
                     MovePiece(rook, Board.Squares[king.CurrentSquare.Row, king.CurrentSquare.Column - 1]);
                 }
-                else if (king.CurrentSquare.Column == 2 || king.CurrentSquare.Column == 1)
+                else if (king.CurrentSquare.Column == 2)
                 {
                     Rook rook = (Rook)Board.Squares[king.CurrentSquare.Row, 0].Piece;
                     MovePiece(rook, Board.Squares[king.CurrentSquare.Row, king.CurrentSquare.Column + 1]);
