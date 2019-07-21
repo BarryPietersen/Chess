@@ -69,6 +69,7 @@ namespace ChessLogic
         /// <returns>Returns true if a checkmate condition has occurred.</returns>
         public bool MovePiece(ChessPiece piece, Square newSquare)
         {
+            Square oldSquare = piece.CurrentSquare;
             if (newSquare.IsOccupied) CapturePiece(newSquare.Piece);
             // specific condition - checks to see if an 'enpassant' move has been made
             else if (piece is Pawn && newSquare.Column != piece.CurrentSquare.Column)
@@ -79,7 +80,14 @@ namespace ChessLogic
             if (!piece.HasMoved)
             {
                 if (piece is Pawn pawn) EnPassantTracker.AnalyseEnpassantConditions(pawn, Board);
-                else if (piece is King king) AnalyseCastlingConditions(king);
+                else if (piece is King king)
+                {
+                    Tuple<Rook, Square> castled = AnalyseCastlingConditions(king, oldSquare);
+                    if (castled != null)
+                    {
+                        MovePiece(castled.Item1, castled.Item2);
+                    }
+                }
 
                 piece.HasMoved = true;
             }
@@ -243,7 +251,7 @@ namespace ChessLogic
             Opponent.PieceSet.Remove(piece);
         }
 
-        protected void PositionPiece(ChessPiece piece, Square newSquare)
+        protected virtual void PositionPiece(ChessPiece piece, Square newSquare)
         {
             piece.CurrentSquare.Piece = null;
             piece.CurrentSquare.PieceChanged();
@@ -268,21 +276,25 @@ namespace ChessLogic
 
         // performs the special 'castling' move and
         // positions the rook in its new square
-        internal void AnalyseCastlingConditions(King king)
+        internal Tuple<Rook, Square> AnalyseCastlingConditions(King king, Square oldSquare)
         {
-            if (king.CurrentSquare.Row == 0 || king.CurrentSquare.Row == 7)
+            if (Math.Abs(king.CurrentSquare.Column - oldSquare.Column) == 2)
             {
-                if (king.CurrentSquare.Column == 6 || king.CurrentSquare.Column == 5)
+                if (king.CurrentSquare.Column > 4)
                 {
                     Rook rook = (Rook)Board.Squares[king.CurrentSquare.Row, 7].Piece;
-                    MovePiece(rook, Board.Squares[king.CurrentSquare.Row, king.CurrentSquare.Column - 1]);
+                    Square newSquare = Board.Squares[king.CurrentSquare.Row, king.CurrentSquare.Column - 1];
+                    return new Tuple<Rook, Square>(rook, newSquare);
                 }
-                else if (king.CurrentSquare.Column == 2 || king.CurrentSquare.Column == 1)
+                else
                 {
                     Rook rook = (Rook)Board.Squares[king.CurrentSquare.Row, 0].Piece;
-                    MovePiece(rook, Board.Squares[king.CurrentSquare.Row, king.CurrentSquare.Column + 1]);
+                    Square newSquare = Board.Squares[king.CurrentSquare.Row, king.CurrentSquare.Column + 1];
+                    return new Tuple<Rook, Square>(rook, newSquare);
                 }
             }
+
+            return null;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace ChessLogic.PieceTypes
             };
 
             // castling is out for now
-            // if (!HasMoved) moves.AddRange(ConsiderCastling(squares));
+            if (!HasMoved) moves.AddRange(ConsiderCastling(squares));
 
             IEnumerable<Square> validMoves = from sq in moves
                                              where sq != null
@@ -55,7 +55,6 @@ namespace ChessLogic.PieceTypes
         //applies the castling rules to the kings moves
         private IEnumerable<Square> ConsiderCastling(Square[,] squares)
         {
-            List<Square> castlingMoves = new List<Square>();
             bool isPathClear = true;
 
             if (squares[CurrentSquare.Row, 0].IsOccupied &&

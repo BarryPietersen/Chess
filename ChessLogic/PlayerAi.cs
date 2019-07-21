@@ -9,6 +9,7 @@ namespace ChessLogic
 {
     public class PlayerAi : Player
     {
+        public int milliSeconds { get; set; } = 800;
         public bool AnimateThoughts { get; set; }
         public PlayerAi(List<ChessPiece> pieceSet, ChessBoard board,
             CheckState checkState, bool isWhite) : base (pieceSet, board, checkState, isWhite){ }
@@ -27,7 +28,7 @@ namespace ChessLogic
 
                     if (AnimateThoughts)
                     {
-                        Task.Delay(650).Wait();
+                        Task.Delay(milliSeconds).Wait();
                     }
 
                     v += DfsThink(Opponent, this);
@@ -61,12 +62,11 @@ namespace ChessLogic
 
         /*
             Pawn    100
-            Rook    500
             Knight  350
             Bishop  350
+            Rook    500
             Queen   1000
             King    10000
-
         */
 
         // the recursive method is time consuming,
@@ -90,7 +90,7 @@ namespace ChessLogic
 
                     if (AnimateThoughts)
                     {
-                        Task.Delay(650).Wait();
+                        Task.Delay(milliSeconds).Wait();
                     }
 
                     currentDfs = DfsThink(p2, p1, depth - 1);
@@ -114,6 +114,8 @@ namespace ChessLogic
         {
             int value = 0;
 
+            Square oldSquare = piece.CurrentSquare;
+
             if (square.IsOccupied)
             {
                 ChessPiece p = square.Piece;
@@ -131,37 +133,25 @@ namespace ChessLogic
 
                 p2.PieceSet.Remove(p);
             }
-            else
-            {
-                moveState.ToSquare = square;
-            }
 
             moveState.P1Pieces.Add(new Tuple<ChessPiece, Square, bool>(piece, piece.CurrentSquare, piece.HasMoved));
 
-            piece.CurrentSquare.Piece = null;
-
-            if (AnimateThoughts)
-            {
-                piece.CurrentSquare.PieceChanged();
-            }
-
-            piece.CurrentSquare = square;
-            piece.CurrentSquare.Piece = piece;
-
-            if (AnimateThoughts)
-            {
-                piece.CurrentSquare.PieceChanged();
-            }
+            PositionTempPiece(piece, square);
 
             if (!piece.HasMoved)
             {
                 // these features are out for now
-                //if (piece is Pawn pawn) EnPassantTracker.AnalyseEnpassantConditions(pawn, Board);
-                //else if (piece is King king)
-                //{
-                //    castling is out for now
-                //    p1.AnalyseCastlingConditions(king);
-                //}
+                if (piece is Pawn pawn) EnPassantTracker.AnalyseEnpassantConditions(pawn, Board);
+                else if (piece is King king)
+                {
+                    var castle = p1.AnalyseCastlingConditions(king, oldSquare);
+                    if (castle != null)
+                    {
+                        moveState.P1Pieces.Add(new Tuple<ChessPiece, Square, bool>(castle.Item1, castle.Item1.CurrentSquare, false));
+                        PositionTempPiece(castle.Item1, castle.Item2);
+                        castle.Item1.HasMoved = true;
+                    }
+                }
 
                 piece.HasMoved = true;
             }
@@ -198,13 +188,31 @@ namespace ChessLogic
             return value;
         }
 
+        protected void PositionTempPiece(ChessPiece piece, Square newSquare)
+        {
+            piece.CurrentSquare.Piece = null;
+
+            if (AnimateThoughts)
+            {
+                piece.CurrentSquare.PieceChanged();
+            }
+
+            piece.CurrentSquare = newSquare;
+            piece.CurrentSquare.Piece = piece;
+
+            if (AnimateThoughts)
+            {
+                piece.CurrentSquare.PieceChanged();
+            }
+        }
+
         private class MoveState
         {
-            public Square ToSquare { get; set; }
             public Player P1 { get; set; }
             public Player P2 { get; set; }
             public List<Tuple<ChessPiece, Square, bool>> P1Pieces { get; set; }
             public List<Tuple<ChessPiece, Square, bool>> P2Pieces { get; set; }
+            public List<Tuple<ChessPiece, Square>> Enpassants { get; set; }
             public Queen PromotedPawn { get; set; }
 
             public MoveState(Player p1, Player p2)
@@ -214,19 +222,32 @@ namespace ChessLogic
 
                 P1Pieces = new List<Tuple<ChessPiece, Square, bool>>();
                 P2Pieces = new List<Tuple<ChessPiece, Square, bool>>();
+                Enpassants = new List<Tuple<ChessPiece, Square>>();
+
+                if (EnPassantTracker.HasValue)
+                {
+                    foreach (var item in EnPassantTracker.CurrentEnPassants)
+                    {
+                        Enpassants.Add(new Tuple<ChessPiece, Square>(item.Key, item.Value));
+                    }
+                }
             }
 
             public void Restore(bool animateThoughts)
             {
+                Square toSquare;
                 foreach (var tup in P1Pieces)
-                {                 
+                {
+                    toSquare = tup.Item1.CurrentSquare;
                     tup.Item1.HasMoved = tup.Item3;
                     tup.Item1.CurrentSquare = tup.Item2;
                     tup.Item2.Piece = tup.Item1;
+                    toSquare.Piece = null;
 
                     if (animateThoughts)
                     {
                         tup.Item2.PieceChanged();
+                        toSquare.PieceChanged();
                     }
                 }
 
@@ -244,13 +265,11 @@ namespace ChessLogic
                     }
                 }
 
-                if (ToSquare != null)
+                if (Enpassants.Count > 0)
                 {
-                    ToSquare.Piece = null;
-
-                    if (animateThoughts)
+                    foreach (var item in Enpassants)
                     {
-                        ToSquare.PieceChanged();
+                        EnPassantTracker.CurrentEnPassants.Add(item.Item1, item.Item2);
                     }
                 }
 

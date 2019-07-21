@@ -12,7 +12,6 @@ namespace ChessLogic
         public King CheckedKing { get; set; }
         public King CheckMateKing { get; set; }
         public King StaleMateKing { get; set; }
-
         public string CheckMessage
         {
             get

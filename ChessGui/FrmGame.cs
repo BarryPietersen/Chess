@@ -168,7 +168,7 @@ namespace ChessGui
 
         private void ChkEngageAi_CheckedChanged(object sender, EventArgs e)
         {
-            game.EnguageAi = ChkEngageAi.Checked;
+            game.EngageAi = ChkEngageAi.Checked;
         }
     }
 }
