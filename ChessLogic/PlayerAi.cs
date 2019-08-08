@@ -2,51 +2,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ChessLogic
 {
     public class PlayerAi : Player
     {
-        public int milliSeconds { get; set; } = 800;
+        public int MilliSeconds { get; set; } = 600;
         public bool AnimateThoughts { get; set; }
         public PlayerAi(List<ChessPiece> pieceSet, ChessBoard board,
             CheckState checkState, bool isWhite) : base (pieceSet, board, checkState, isWhite){ }
 
         public void Think()
         {
-            MoveState ms;
-            List<Tuple<ChessPiece, Square, int>> moves = new List<Tuple<ChessPiece, Square, int>>();
-
-            foreach (var p in PieceSet.ToList())
-            {
-                foreach (var sq in ValidateMoves(p))
-                {
-                    ms = new MoveState(this, Opponent);
-                    int v = MovePiece(this, Opponent, p, sq, ms);
-
-                    if (AnimateThoughts)
-                    {
-                        Task.Delay(milliSeconds).Wait();
-                    }
-
-                    v += DfsThink(Opponent, this);
-                    moves.Add(new Tuple<ChessPiece, Square, int>(p, sq, v));
-                    ms.Restore(AnimateThoughts);
-                }
-            }
+            List<Move> moves = EvaluateThoughts();
 
             // determine the highest value move in moves
             // or if none use a different strategy to analyse
             // the best move
             if (moves.Count > 0)
             {
-                var max = moves.Max(m => m.Item3);
-                var highest = moves.Where(m => m.Item3 == max).ToList();
+                var max = moves.Max(m => m.Value);
+                var highest = moves.Where(m => m.Value == max).ToList();
+                // for now we are just picking a random move from highest
                 var move = highest[new Random().Next(0, highest.Count - 1)];
 
-                MovePiece(move.Item1, move.Item2);
+                MovePiece(move.Piece, move.ToSquare);
             }
             else if (IsCheckMate())
             {
@@ -60,6 +41,32 @@ namespace ChessLogic
             }
         }
 
+        private List<Move> EvaluateThoughts()
+        {
+            Thought thought;
+            List<Move> moves = new List<Move>();
+
+            foreach (var p in PieceSet.ToList())
+            {
+                foreach (var sq in ValidateMoves(p))
+                {
+                    thought = MovePiece(this, Opponent, p, sq);
+
+                    if (AnimateThoughts)
+                    {
+                        Task.Delay(MilliSeconds).Wait();
+                    }
+
+                    thought.Value += DfsThought(Opponent, this);
+
+                    moves.Add(new Move(p, sq, thought.Value));
+                    thought.Undo(AnimateThoughts);
+                }
+            }
+
+            return moves;
+        }
+
         /*
             Pawn    100
             Knight  350
@@ -71,38 +78,42 @@ namespace ChessLogic
 
         // the recursive method is time consuming,
         // for now just searching three moves deep
-        // and selecting the highest value capture
-        private int DfsThink(Player p1, Player p2, int depth = 2)
+        // and selecting the highest value move
+        private int DfsThought(Player p1, Player p2, int depth = 2)
         {
             if (depth == 0) return 0;
 
-            int currentVal;
             int currentDfs;
             int dfsValue = 0;
-            int currentMax = int.MinValue;
+            int currentMax = int.MinValue + 1;
 
             foreach (var p in p1.PieceSet.ToList())
             {
                 foreach (var sq in p1.ValidateMoves(p))
                 {
-                    MoveState ms = new MoveState(p1, p2);
-                    currentVal = MovePiece(p1, p2, p, sq, ms);
+                    Thought thought = MovePiece(p1, p2, p, sq);
 
                     if (AnimateThoughts)
                     {
-                        Task.Delay(milliSeconds).Wait();
+                        Task.Delay(MilliSeconds).Wait();
                     }
 
-                    currentDfs = DfsThink(p2, p1, depth - 1);
+                    currentDfs = DfsThought(p2, p1, depth - 1);
 
-                    if (currentVal > currentMax)
+                    if (thought.Value > currentMax)
                     {
-                        currentMax = currentVal;
+                        currentMax = thought.Value;
                         dfsValue = currentDfs;
                     }
 
-                    ms.Restore(AnimateThoughts);
+                    thought.Undo(AnimateThoughts);
                 }
+            }
+
+            // the player does not have any legal moves
+            if (currentMax == (int.MinValue + 1))
+            {
+                return depth % 2 == 0 ? Math.Abs(currentMax) : currentMax;
             }
 
             currentMax = depth % 2 == 0 ? -currentMax : currentMax;
@@ -110,44 +121,44 @@ namespace ChessLogic
             return dfsValue + currentMax;
         }
 
-        private int MovePiece(Player p1, Player p2, ChessPiece piece, Square square, MoveState moveState)
+        private Thought MovePiece(Player p1, Player p2, ChessPiece piece, Square toSquare)
         {
-            int value = 0;
+            Thought thought = new Thought(p1, p2);
 
             Square oldSquare = piece.CurrentSquare;
 
-            if (square.IsOccupied)
+            if (toSquare.IsOccupied)
             {
-                ChessPiece p = square.Piece;
-                moveState.P2Pieces.Add(new Tuple<ChessPiece, Square, bool>(p, p.CurrentSquare, p.HasMoved));
-                value = p.Value;
+                ChessPiece p = toSquare.Piece;
+                thought.P2Moved = new Moved(p, p.CurrentSquare, p.HasMoved);
+                thought.Value = p.Value;
 
                 p2.PieceSet.Remove(p);
             }
             // specific condition - checks to see if an 'enpassant' move has been made
-            else if (piece is Pawn && square.Column != piece.CurrentSquare.Column)
+            else if (piece is Pawn && toSquare.Column != piece.CurrentSquare.Column)
             {
-                ChessPiece p = Board.Squares[(piece.CurrentSquare.Row == 3 ? 3 : 4), square.Column].Piece;
-                moveState.P2Pieces.Add(new Tuple<ChessPiece, Square, bool>(p, p.CurrentSquare, p.HasMoved));
-                value = p.Value;
+                ChessPiece p = Board.Squares[(piece.CurrentSquare.Row == 3 ? 3 : 4), toSquare.Column].Piece;
+                thought.P2Moved = new Moved(p, p.CurrentSquare, p.HasMoved);
+                thought.Value = p.Value;
 
                 p2.PieceSet.Remove(p);
             }
 
-            moveState.P1Pieces.Add(new Tuple<ChessPiece, Square, bool>(piece, piece.CurrentSquare, piece.HasMoved));
+            thought.P1Moved = new Moved(piece, piece.CurrentSquare, piece.HasMoved);
 
-            PositionTempPiece(piece, square);
+            PositionTempPiece(piece, toSquare);
 
             if (!piece.HasMoved)
             {
-                // these features are out for now
+                // enpassant is out for now
                 if (piece is Pawn pawn) EnPassantTracker.AnalyseEnpassantConditions(pawn, Board);
                 else if (piece is King king)
                 {
                     var castle = p1.AnalyseCastlingConditions(king, oldSquare);
                     if (castle != null)
                     {
-                        moveState.P1Pieces.Add(new Tuple<ChessPiece, Square, bool>(castle.Item1, castle.Item1.CurrentSquare, false));
+                        thought.P1Special = new Moved(castle.Item1, castle.Item1.CurrentSquare, castle.Item1.HasMoved);
                         PositionTempPiece(castle.Item1, castle.Item2);
                         castle.Item1.HasMoved = true;
                     }
@@ -162,7 +173,7 @@ namespace ChessLogic
             if (piece is Pawn && (piece.CurrentSquare.Row == 0 || piece.CurrentSquare.Row == 7))
             {
                 piece = p1.PromotePawn(piece);
-                moveState.PromotedPawn = (Queen)piece;
+                thought.PromotedPawn = (Queen)piece;
 
                 if (AnimateThoughts)
                 {
@@ -176,19 +187,19 @@ namespace ChessLogic
                 EnPassantTracker.HasValue = false;
             }
 
-            if (p2.IsCheck(piece))
+            if (p2.MockIsCheck(piece))
             {
-                value = 20;
+                thought.Value = 20;
                 if (p2.IsCheckMate())
                 {
-                    value = 10000;
+                    thought.Value = 10000;
                 }
             }
 
-            return value;
+            return thought;
         }
 
-        protected void PositionTempPiece(ChessPiece piece, Square newSquare)
+        protected void PositionTempPiece(ChessPiece piece, Square toSquare)
         {
             piece.CurrentSquare.Piece = null;
 
@@ -197,87 +208,12 @@ namespace ChessLogic
                 piece.CurrentSquare.PieceChanged();
             }
 
-            piece.CurrentSquare = newSquare;
+            piece.CurrentSquare = toSquare;
             piece.CurrentSquare.Piece = piece;
 
             if (AnimateThoughts)
             {
                 piece.CurrentSquare.PieceChanged();
-            }
-        }
-
-        private class MoveState
-        {
-            public Player P1 { get; set; }
-            public Player P2 { get; set; }
-            public List<Tuple<ChessPiece, Square, bool>> P1Pieces { get; set; }
-            public List<Tuple<ChessPiece, Square, bool>> P2Pieces { get; set; }
-            public List<Tuple<ChessPiece, Square>> Enpassants { get; set; }
-            public Queen PromotedPawn { get; set; }
-
-            public MoveState(Player p1, Player p2)
-            {
-                P1 = p1;
-                P2 = p2;
-
-                P1Pieces = new List<Tuple<ChessPiece, Square, bool>>();
-                P2Pieces = new List<Tuple<ChessPiece, Square, bool>>();
-                Enpassants = new List<Tuple<ChessPiece, Square>>();
-
-                if (EnPassantTracker.HasValue)
-                {
-                    foreach (var item in EnPassantTracker.CurrentEnPassants)
-                    {
-                        Enpassants.Add(new Tuple<ChessPiece, Square>(item.Key, item.Value));
-                    }
-                }
-            }
-
-            public void Restore(bool animateThoughts)
-            {
-                Square toSquare;
-                foreach (var tup in P1Pieces)
-                {
-                    toSquare = tup.Item1.CurrentSquare;
-                    tup.Item1.HasMoved = tup.Item3;
-                    tup.Item1.CurrentSquare = tup.Item2;
-                    tup.Item2.Piece = tup.Item1;
-                    toSquare.Piece = null;
-
-                    if (animateThoughts)
-                    {
-                        tup.Item2.PieceChanged();
-                        toSquare.PieceChanged();
-                    }
-                }
-
-                foreach (var tup in P2Pieces)
-                {
-                    tup.Item1.HasMoved = tup.Item3;
-                    tup.Item1.CurrentSquare = tup.Item2;
-                    tup.Item2.Piece = tup.Item1;
-
-                    P2.PieceSet.Add(tup.Item1);
-
-                    if (animateThoughts)
-                    {
-                        tup.Item2.PieceChanged();
-                    }
-                }
-
-                if (Enpassants.Count > 0)
-                {
-                    foreach (var item in Enpassants)
-                    {
-                        EnPassantTracker.CurrentEnPassants.Add(item.Item1, item.Item2);
-                    }
-                }
-
-                if (PromotedPawn != null)
-                {
-                    P1.PieceSet.Remove(PromotedPawn);
-                    P1.PieceSet.Add(P1Pieces[0].Item1);
-                }
             }
         }
     }

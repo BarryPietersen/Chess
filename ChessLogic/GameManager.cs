@@ -66,7 +66,7 @@ namespace ChessLogic
                 selectedPieceValidMoves.Clear();
             }
 
-            if (sq != null && sq.IsOccupied)
+            if (sq != null && sq.IsOccupied && player1.PieceSet.Contains(sq.Piece))
             {
                 selectedSquare = sq;
                 selectedPiece = sq.Piece;
@@ -94,23 +94,19 @@ namespace ChessLogic
             }
             else if (checkState.IsCheck)
             {
-                //DisplayMessage?.Invoke(checkState.CheckMessage, "Check!");
+                DisplayMessage?.Invoke(checkState.CheckMessage, "Check!");
                 checkState.IsCheck = false;
                 checkState.CheckedKing = null;
             }
             else if (checkState.IsStaleMate)
             {
                 DisplayMessage?.Invoke(checkState.StaleMateMessage, "Stale Mate!");
-                //CallCheckMate?.Invoke();
+                CallCheckMate?.Invoke();
             }
         }
 
         private void MovePiece(Square sq)
         {
-            if (selectedPiece == null)
-            {
-                int x = 1;
-            }
             if (player1.IsWhite == selectedPiece.IsWhite)
             {
                 if (player1.MovePiece(selectedPiece, sq))
@@ -132,7 +128,6 @@ namespace ChessLogic
             if (selectedSquare.Piece.IsWhite == player1.IsWhite && isPlayer1Turn)
             {
                 MovePiece(sq);
-
 
                 //isPlayer1Turn = false;
             }

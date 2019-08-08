@@ -58,6 +58,7 @@
     <Compile Include="PlayerAi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Square.cs" />
+    <Compile Include="Thought.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

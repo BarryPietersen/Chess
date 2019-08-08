@@ -197,7 +197,7 @@ namespace ChessLogic
             tempSquare.Piece = null;
         }
 
-        private bool MockIsCheck(ChessPiece attacker)
+        internal bool MockIsCheck(ChessPiece attacker)
         {
             foreach (Square sq in attacker.SearchPossibleMoves(Board))
             {
